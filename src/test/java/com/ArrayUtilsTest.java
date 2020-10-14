@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+
 public class ArrayUtilsTest {
 
     int[] empty;
@@ -45,7 +47,7 @@ public class ArrayUtilsTest {
         for(int i = 0; i < original.length; i++){
             Assert.assertEquals(original[i], updated[i]);
         }
-        Assert.assertEquals(updated[10], newValue);
+        Assert.assertEquals(newValue, updated[10]);
     }
 
     @Test
@@ -54,7 +56,7 @@ public class ArrayUtilsTest {
         Assert.assertEquals(2* original.length, updated.length);
         for(int i = 0; i < original.length; i++){
             Assert.assertEquals(original[i], updated[i]);
-            Assert.assertEquals(original[i], updated[i+ original.length]);
+            Assert.assertEquals(original[i], updated[i+original.length]);
         }
     }
 
@@ -82,27 +84,17 @@ public class ArrayUtilsTest {
 
     @Test
     public void testInsertWithInvalidIndex() {
-
-        int index = 3;
-        int value = -1;
-
-        int[] updated = ArrayUtils.insert(original, value, index);
-
-        Assert.assertEquals(original.length, updated.length);
-
+        int[] updated = ArrayUtils.insert(original, 3, -1);
         Assert.assertArrayEquals(original, updated);
-
-        for(int i = index; i < original.length; i++){
-            Assert.assertEquals(original[i], updated[i+1]);
-        }
-
     }
 
     @Test
     public void testTestClone() {
         int[] clone = ArrayUtils.clone(original);
-        Assert.assertEquals(original, clone);
-        Assert.assertNotSame(original, clone);
+        Assert.assertEquals(original.length, clone.length);
+        for(int i = 0; i < original.length; i++){
+            Assert.assertEquals(original[i], clone[i]);
+        }
     }
 
     @Test
@@ -112,7 +104,7 @@ public class ArrayUtilsTest {
         int[] result = ArrayUtils.subArray(original, indexOne, indexTwo);
 
         Assert.assertEquals(result.length, indexTwo-indexOne);
-        for(int i = indexOne; i <= indexTwo; i++){
+        for(int i = indexOne; i < indexTwo; i++){
             Assert.assertEquals(original[i], result[i-indexOne]);
         }
     }
@@ -133,7 +125,7 @@ public class ArrayUtilsTest {
         int value = 6;
         ArrayUtils.fill(toBeUpdated, value);
         for(int i : toBeUpdated){
-            Assert.assertEquals(i, value);
+            Assert.assertEquals(value, i);
         }
     }
 
@@ -174,12 +166,12 @@ public class ArrayUtilsTest {
         int value = 9;
         int[] updated = ArrayUtils.remove(original, value);
 
-        Assert.assertEquals(updated.length, original.length-1);
-        for(int i = 0; i < 4; i++){
-            Assert.assertEquals(updated[i], original[i]);
+        Assert.assertEquals(original.length-1, updated.length);
+        for(int i = 0; i < 3; i++){
+            Assert.assertEquals(original[i], updated[i]);
         }
-        for(int i = 4; i < updated.length; i++){
-            Assert.assertEquals(updated[i], original[i+1]);
+        for(int i = 3; i < updated.length; i++){
+            Assert.assertEquals(original[i+1], updated[i]);
         }
 
     }
@@ -187,15 +179,15 @@ public class ArrayUtilsTest {
     @Test
     public void testRemoveMissingValue() {
         int[] updated = ArrayUtils.remove(original, 10);
-        Assert.assertArrayEquals(updated, original);
+        Assert.assertArrayEquals(original, updated);
     }
 
     @Test
     public void testReverse() {
         ArrayUtils.reverse(toBeUpdated);
-        Assert.assertNotEquals(toBeUpdated[0], original[0]);
+        Assert.assertNotEquals(original[1], toBeUpdated[1]);
         ArrayUtils.reverse(toBeUpdated);
-        Assert.assertArrayEquals(toBeUpdated, original);
+        Assert.assertArrayEquals(original, toBeUpdated);
     }
 
     @Test
@@ -217,7 +209,32 @@ public class ArrayUtilsTest {
         int offset = -4;
         ArrayUtils.shift(toBeUpdated, offset);
 
-        offset = original.length - offset;
+        offset = original.length + offset;
+        for(int i = 0; i < original.length; i++){
+            int newIndex = (i + offset) % original.length;
+            Assert.assertEquals(original[i], toBeUpdated[newIndex]);
+        }
+
+    }
+
+    @Test
+    public void testShiftThree() {
+
+        int offset = 0;
+        ArrayUtils.shift(toBeUpdated, offset);
+
+        for(int i = 0; i < original.length; i++){
+            Assert.assertEquals(original[i], toBeUpdated[i]);
+        }
+
+    }
+
+    @Test
+    public void testShiftFour() {
+
+        int offset = 20;
+        ArrayUtils.shift(toBeUpdated, offset);
+
         for(int i = 0; i < original.length; i++){
             int newIndex = (i + offset) % original.length;
             Assert.assertEquals(original[i], toBeUpdated[newIndex]);
@@ -236,5 +253,20 @@ public class ArrayUtilsTest {
         Assert.assertEquals(original[indexOne], toBeUpdated[indexTwo]);
         Assert.assertEquals(original[indexTwo], toBeUpdated[indexOne]);
 
+    }
+
+    @Test
+    public void copyTestWithInvalidInput(){
+        ArrayUtils.copy(original, empty);
+        Assert.assertEquals(0, empty.length);
+    }
+
+    @Test
+    public void copyTestWithValidInput(){
+        int[] updated = new int[original.length];
+        ArrayUtils.copy(original, updated);
+        for(int i = 0; i < original.length; i++){
+            Assert.assertEquals(original[i], updated[i]);
+        }
     }
 }

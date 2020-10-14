@@ -31,4 +31,6 @@ public class ArrayUtils {
     public static void shift(int[] original, int offset){}
 
     public static void swap(int[] original, int index1, int index2){}
+
+    public static void copy(int[] origin, int[] destination){}
 }
